@@ -1,0 +1,16 @@
+[
+  {
+    "id": "acc1",
+    "cookie": "sessionid=xxx; token=yyy",
+    "bearer": "",
+    "weight": 1,
+    "enabled": true
+  },
+  {
+    "id": "acc2",
+    "cookie": "sessionid=aaa; token=bbb",
+    "bearer": "",
+    "weight": 2,
+    "enabled": true
+  }
+]

@@ -1,0 +1,31 @@
+# Dependencies
+/node_modules/
+
+# Local configuration and environment
+/config.json
+.env
+.env.*
+!.env.example
+
+# Runtime data, credentials, captures, certificates
+/data/*
+!/data/accounts.example.json
+/data-e2e/
+/certs/
+*.log
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local reverse-engineering workbench and extracted third-party code
+/tools/
+
+# Upload verification workspace
+/.upload-check/
+
+# Editors and operating system
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

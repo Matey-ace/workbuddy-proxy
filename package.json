@@ -1,0 +1,21 @@
+{
+  "name": "workbuddy-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "把 WorkBuddy 网页版额度反向代理成 OpenAI / Anthropic / Ollama 兼容 API，供其他 Agent 调用",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "gen-cert": "node scripts/gen-cert.js",
+    "import-cookie": "node scripts/import-cookie.js",
+    "selftest": "node scripts/selftest.js",
+    "login": "node scripts/login.js"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  }
+}

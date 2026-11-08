@@ -1,0 +1,33 @@
+{
+  "upstream": {
+    "base": "https://www.[WORK_BUDDY_HOST]",
+    "chatPath": "/api/chat",
+    "newConvPath": "/api/conversations",
+    "quotaPath": "/api/user/quota",
+    "modelsPath": "/api/models",
+    "origin": "https://www.[WORK_BUDDY_HOST]",
+    "referer": "https://www.[WORK_BUDDY_HOST]/chat",
+    "responseMode": "sse",
+    "defaultModel": "workbuddy-default",
+    "convIdKey": "conversation_id",
+    "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+  },
+  "headers": {
+    "x-workspace-id": "",
+    "x-client-version": ""
+  },
+  "models": ["workbuddy-default", "workbuddy-pro", "workbuddy-fast"],
+  "aliases": {
+    "gpt-4o": "workbuddy-pro",
+    "gpt-4o-mini": "workbuddy-fast",
+    "claude-3-5-sonnet": "workbuddy-pro",
+    "claude-sonnet-4": "workbuddy-pro",
+    "deepseek-chat": "workbuddy-default"
+  },
+  "deltaPath": "",
+  "reasoningPath": "",
+  "finishPath": "",
+  "usagePath": "",
+  "errorPath": "",
+  "convIdRespPath": ""
+}
