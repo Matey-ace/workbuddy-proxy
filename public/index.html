@@ -125,6 +125,8 @@
   button.ghost:hover{background:var(--acc-soft);border-color:var(--acc-line);color:var(--acc);box-shadow:none}
   button.danger{background:var(--err);border-color:var(--err)}
   button.danger:hover{background:#9c3d35;border-color:#9c3d35}
+  button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+  button:disabled:hover{background:var(--surface);border-color:var(--line-strong);color:var(--txt-2);transform:none;box-shadow:none}
   .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
 
   .hint{color:var(--txt-2);font-size:12px;line-height:1.8;margin-top:14px}
@@ -264,7 +266,7 @@
     <div class="ep-row"><span class="ep-name">Claude</span><code id="apiClaude"></code><button class="ghost" onclick="cp('apiClaude')">复制</button></div>
     <div class="ep-row"><span class="ep-name">Ollama</span><code id="apiOllama"></code><button class="ghost" onclick="cp('apiOllama')">复制</button></div>
 
-    <div class="ep-row key-row"><span class="ep-name">API KEY</span><code id="apiKeyRow"></code><button class="ghost" onclick="cp('apiKeyRow')">复制</button></div>
+    <div class="ep-row key-row"><span class="ep-name">API KEY</span><code id="apiKeyRow" data-copy-value=""></code><button class="ghost" id="btnCopyApiKey" onclick="cp('apiKeyRow')">复制</button></div>
 
     <div class="hint">模型名直接用真实名，例如 <code>glm-5.3</code> · <code>deepseek-v4.1-flash</code> · <code>kimi-k3-1</code>，或填 <code>auto</code> 让服务端挑。</div>
   </div>
@@ -471,9 +473,32 @@ api._token = token;
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
 
 window.cp = (id) => {
-  const txt = document.getElementById(id).textContent;
-  navigator.clipboard?.writeText(txt).then(()=>toast('已复制：'+txt)).catch(()=>toast(txt));
+  const el = document.getElementById(id);
+  if (!el) return;
+  // 优先使用显式声明的纯值，避免把「API Key: 」等展示前缀一起复制
+  const txt = el.dataset.copyValue ?? el.textContent;
+  const value = txt.trim();
+  if (!value) { toast('暂无可复制的内容'); return; }
+  const done = () => toast('已复制：' + value);
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(value).then(done).catch(() => fallbackCopy(value, done));
+  } else {
+    fallbackCopy(value, done);
+  }
 };
+
+function fallbackCopy(value, done) {
+  const ta = document.createElement('textarea');
+  ta.value = value;
+  ta.setAttribute('readonly', '');
+  ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch {}
+  ta.remove();
+  ok ? done() : toast(value);
+}
 
 function initApiBox(){
   const o = location.origin;
@@ -518,8 +543,16 @@ async function refresh(){
   $('#tagQueue').textContent = `队列 ${s.queue?.active||0}/${s.queue?.max||0} 等待 ${s.queue?.queued||0}`;
 
   const st = s.stats||{}; const t = st.total||{};
-  const keyRow = s.apiKey ? `API Key: ${s.apiKey}` : 'API Key: （未设置）';
-  $('#apiKeyRow').textContent = keyRow;
+  // 展示与可复制值分离：标签已在左侧 .ep-name，code 里只放纯 Key
+  const apiKey = (s.apiKey || '').trim();
+  const keyEl = $('#apiKeyRow');
+  keyEl.dataset.copyValue = apiKey;
+  keyEl.textContent = apiKey || '未设置（可设置环境变量 API_KEY，或随便填一个）';
+  const keyBtn = $('#btnCopyApiKey');
+  if (keyBtn) {
+    keyBtn.disabled = !apiKey;
+    keyBtn.title = apiKey ? '复制 API Key' : '尚未设置 API Key';
+  }
 
   const srcMap = { upstream: '来自上游', default: '默认占位（未连上上游）', manual: '手工填写' };
   $('#modelSourceTxt').textContent = srcMap[s.modelsSource] || s.modelsSource || '-';
